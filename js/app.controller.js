@@ -52,3 +52,33 @@ function onPanTo() {
     console.log('Panning the Map')
     mapService.panTo(35.6895, 139.6917)
 }
+//CRUD************
+function onAddPlace(ev) {
+    const name = prompt('name this place')
+    if (name === '') return
+    const loc = {
+        lat: ev.latLng.lat(),
+        lng: ev.latLng.lng()
+    }
+
+    createLoc(loc, name);
+    //    renderCards()
+    renderMarkers()
+}
+
+function renderMarkers() {
+    const locs = locService.getLocs();
+    console.log(locs);
+}
+
+function onUpdateLoc() {
+    //To be changed to modal
+    const newName = prompt('choose a new name')
+    updateLocName(id, newName)
+    renderMarkers
+}
+
+function onRemoveLoc(id) {
+    locService.removeLoc(id)
+    renderMarkers()
+}

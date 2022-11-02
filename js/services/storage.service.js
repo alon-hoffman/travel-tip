@@ -3,7 +3,7 @@ export const storage = {
     load: loadFromStorage
 }
 
-
+Window.loadFromStorage = loadFromStorage
 
 function saveToStorage(key, val) {
     localStorage.setItem(key, JSON.stringify(val))
@@ -13,3 +13,5 @@ function loadFromStorage(key) {
     var val = localStorage.getItem(key)
     return JSON.parse(val)
 }
+
+window.loadFromStorage = loadFromStorage
