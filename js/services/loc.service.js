@@ -37,11 +37,13 @@ const locs = [
 
 //CRUD*********************************8
 
-function createLoc(loc, name) {
+function createLoc(pos, name) {
   const newLoc = {
     id: utils.makeId(),
     name,
-    loc,
+    pos,
+    created: Date.now(),
+    lastUpdate: Date.now(),
   }
   locCache.unshift(newLoc)
   storage.save('locations', locCache)
@@ -50,6 +52,8 @@ function createLoc(loc, name) {
 function updateLocName(id, newName) {
   const loc = getLoc(id)
   loc.name = newName
+  locCache.lastUpdate = Date.now()
+  storage.save('locations', locCache)
 }
 
 function removeLoc(id) {

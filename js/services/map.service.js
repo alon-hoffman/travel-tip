@@ -1,8 +1,12 @@
 export const mapService = {
     initMap,
     addMarker,
-    panTo
+    panTo,
+    getMap
 }
+
+import { controller } from '../app.controller.js'
+
 
 
 // Var that is used throughout this Module (not global)
@@ -17,7 +21,13 @@ function initMap(lat = 32.0749831, lng = 34.9120554) {
                 document.querySelector('#map'), {
                 center: { lat, lng },
                 zoom: 15
+
             })
+
+            gMap.addListener('click', ev => {
+                controller.onAddPlace(ev)
+            }
+            )
             console.log('Map!', gMap)
         })
 }
@@ -49,4 +59,8 @@ function _connectGoogleApi() {
         elGoogleApi.onload = resolve
         elGoogleApi.onerror = () => reject('Google script failed to load')
     })
+}
+
+function getMap() {
+    return gMap
 }
