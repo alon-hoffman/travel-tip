@@ -8,6 +8,7 @@ window.onGetLocs = onGetLocs
 window.onGetUserPos = onGetUserPos
 
 function onInit() {
+    locService.initCache()
     mapService.initMap()
         .then(() => {
             console.log('Map is ready')
