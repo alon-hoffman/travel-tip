@@ -65,8 +65,12 @@
 
     <section class="location-cards-container">
       <article class="location-card">
-        <h3 contenteditable="true" onchange="onUpdateLoc(id,this.value)">
-          Home
+        <h3
+          contenteditable="true"
+          onblur="onUpdateLoc('${loc.id}',this.innerText)"
+          onkeydown="onUpdateLoc('${loc.id}',this.innerText, event)"
+        >
+          " > Home
         </h3>
         <p>Tel Aviv, IL</p>
         <span class="icons"

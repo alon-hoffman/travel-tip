@@ -3,7 +3,7 @@ import { locService } from './services/loc.service.js'
 import { mapService } from './services/map.service.js'
 
 export const controller = {
-  onAddPlace,
+    onAddPlace,
 }
 
 window.onUpdateLoc = onUpdateLoc
@@ -15,27 +15,30 @@ window.onGetUserPos = onGetUserPos
 window.onSearch = onSearch
 window.onCopyLink = onCopyLink
 
+var gMarkers = []
+
 function onInit() {
-  locService.initCache()
-  mapService
-    .initMap()
-    .then(() => {
-      renderMarkers
-    })
-    .catch(() => console.log('Error: cannot init map'))
+    locService.initCache()
+    renderCards()
 
-  const queryParams = new URLSearchParams(location.search)
+    mapService
+        .initMap()
+        .then(
+            renderMarkers
+        )
+        .catch(() => console.log('Error: cannot init map'))
 
-  const lastSearch = queryParams.get('search')
-  if (lastSearch) _doSearch(lastSearch)
+    const queryParams = new URLSearchParams(location.search)
+
+    const lastSearch = queryParams.get('search')
+    if (lastSearch) _doSearch(lastSearch)
 }
 
 // This function provides a Promise API to the callback-based-api of getCurrentPosition
 function getPosition() {
-  console.log('Getting Pos')
-  return new Promise((resolve, reject) => {
-    navigator.geolocation.getCurrentPosition(resolve, reject)
-  })
+    return new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject)
+    })
 }
 
 // function onAddMarker() {
@@ -44,10 +47,9 @@ function getPosition() {
 // }
 
 function onGetLocs() {
-  locService.getLocs().then((locs) => {
-    console.log('Locations:', locs)
-    document.querySelector('.locs').innerText = JSON.stringify(locs, null, 2)
-  })
+    locService.getLocs().then((locs) => {
+        document.querySelector('.locs').innerText = JSON.stringify(locs, null, 2)
+    })
 }
 
 // function onGetUserPos() {
@@ -62,51 +64,51 @@ function onGetLocs() {
 //         })
 // }
 function onPanTo(lat, lng) {
-  mapService.panTo(lat, lng)
+    mapService.panTo(lat, lng)
 }
 
 function onSearch(ev) {
-  ev.preventDefault()
-  const query = document.querySelector('.search input').value
-  _doSearch(query)
+    ev.preventDefault()
+    const query = document.querySelector('.search input').value
+    _doSearch(query)
 }
 
 function _doSearch(query) {
-  utils.saveToQuery({ search: query })
-  locService.search(query).then(({ loc: { lat, lng }, address }) => {
-    onPanTo(lat, lng)
-    document.querySelector('.current-location span').innerText = address
-  })
+    utils.saveToQuery({ search: query })
+    locService.search(query).then(({ loc: { lat, lng }, address }) => {
+        onPanTo(lat, lng)
+        document.querySelector('.current-location span').innerText = address
+    })
 }
 
 function onCopyLink() {
-  utils.copyLink()
+    utils.copyLink()
 }
 
 //CRUD************
 
 function onAddPlace(ev) {
-  const name = prompt('name this place')
-  if (name === '') return
-  const loc = {
-    lat: ev.latLng.lat(),
-    lng: ev.latLng.lng(),
-  }
+    const name = prompt('name this place')
+    if (name === '' || name === null) return
+    const loc = {
+        lat: ev.latLng.lat(),
+        lng: ev.latLng.lng(),
+    }
 
-  locService.createLoc(loc, name)
-  renderCards()
-  renderMarkers()
+    locService.createLoc(loc, name)
+    renderCards()
+    renderMarkers()
 }
 
 // loc.pos.lat, loc.pos.lng
 
 function renderCards() {
-  const locs = locService.getLocs()
-  console.log(locs[0].pos)
-  const htmlStr = locs.map(
-    (loc) =>
-      ` <article  class="location-card">
-    <h3 contenteditable="true" onblur="onUpdateLoc('${loc.id}',this.innerText)" >${loc.name}</h3>
+    const locs = locService.getLocs()
+    const htmlStr = locs.map(
+        (loc) =>
+            ` <article  class="location-card">
+    <h3 contenteditable="true" onblur="onUpdateLoc('${loc.id}',this.innerText, event)" 
+    onkeydown="onUpdateLoc('${loc.id}',this.innerText, event)">${loc.name}</h3>
     <p>Tel Aviv, IL</p>
     <span class="icons"
       ><svg
@@ -129,35 +131,37 @@ function renderCards() {
       </svg>
     </span>
   </article>`
-  )
+    )
 
-  document.querySelector('.location-cards-container').innerHTML =
-    htmlStr.join('')
+    document.querySelector('.location-cards-container').innerHTML =
+        htmlStr.join('')
 }
 
 function renderMarkers() {
-  const map = mapService.getMap()
-  gMarkers.forEach((marker) => marker.setMap(null))
-  const locs = locService.getLocs()
-  gMarkers = locs.map(({ pos, name }) => {
-    const coord = pos
-    return new google.maps.Marker({
-      position: coord,
-      map: map,
-      title: name,
+    const map = mapService.getMap()
+    gMarkers.forEach((marker) => marker.setMap(null))
+    const locs = locService.getLocs()
+    gMarkers = locs.map(({ pos, name }) => {
+        const coord = pos
+        return new google.maps.Marker({
+            position: coord,
+            map: map,
+            title: name,
+        })
     })
-  })
 }
 
-function onUpdateLoc(id, name) {
-  debugger
-  locService.updateLocName(id, name)
-  renderCards()
-  renderMarkers()
+function onUpdateLoc(id, name, ev) {
+    if (ev.type === "blur"
+        || ev.keyCode === 13) {
+        locService.updateLocName(id, name)
+        renderCards()
+        renderMarkers()
+    }
 }
 
 function onRemoveLoc(id) {
-  locService.removeLoc(id)
-  renderCards()
-  renderMarkers()
+    locService.removeLoc(id)
+    renderCards()
+    renderMarkers()
 }
