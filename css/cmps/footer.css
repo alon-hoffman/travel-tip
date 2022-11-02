@@ -1,0 +1,33 @@
+.main-footer {
+  background-color: var(--clr-card-background);
+  /* position: fixed;
+  bottom: 0;
+  inset-inline: 0; */
+  padding: 60px;
+  margin-inline: -70px;
+  margin-bottom: -40px;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.main-footer .last-searched span {
+  border-bottom: 2px solid transparent;
+  text-transform: capitalize;
+}
+
+.main-footer .last-searched span:hover {
+  border-bottom-color: var(--clr-main);
+  cursor: pointer;
+  color: var(--clr-main);
+}
+
+.main-footer .clear-history-btn {
+  width: 1.5em;
+  height: 1.5em;
+}
+.main-footer .clear-history-btn:hover {
+  color: red;
+  cursor: pointer;
+}

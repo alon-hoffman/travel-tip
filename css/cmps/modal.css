@@ -1,0 +1,42 @@
+body:has(.modal:not([hidden])) {
+  overflow-y: hidden;
+}
+
+.modal {
+  position: fixed;
+  background-color: #ffffffbb;
+  inset: 0;
+  z-index: 20;
+}
+
+.modal-wrapper {
+  position: fixed;
+  padding: 60px 80px;
+  background-color: #fff;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 20;
+  box-shadow: var(--card-shadow);
+  font-size: 1.5rem;
+  border-radius: 1.25rem;
+}
+
+.cancel-btn {
+  color: #888;
+  float: right;
+}
+
+.remove-btn {
+  color: rgb(213, 101, 101);
+  float: right;
+  margin-left: 25px;
+}
+
+.cancel-btn:hover {
+  color: #444;
+}
+
+.remove-btn:hover {
+  color: rgb(237, 33, 33);
+}

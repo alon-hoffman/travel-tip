@@ -1,0 +1,94 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Cabin, sans-serif;
+  color: var(--clr-text-primary);
+  background-color: var(--clr-main-background);
+  margin: 40px 70px;
+  display: grid;
+  grid-template: 120px 40px 1fr / 300px 1fr;
+  grid-template-areas:
+    'header header'
+    'loc-title map-title'
+    'location map';
+  height: calc(100vh - 80px);
+  width: calc(100vw - 140px);
+  column-gap: 40px;
+}
+
+.main-header {
+  grid-area: header;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin-top: 0;
+}
+
+h1,
+h3 {
+  font-family: Ubuntu-Bold, Roboto, sans-serif;
+  font-weight: unset;
+}
+
+h1 {
+  font-size: 3em;
+}
+
+h2 {
+  font-family: Ubuntu-Medium, Roboto, sans-serif;
+  font-weight: unset;
+  color: var(--clr-text-secondary);
+  margin-bottom: 2rem;
+  font-size: 1.5rem;
+}
+h3 {
+  margin-bottom: 1rem;
+  font-size: 1.62em;
+}
+a,
+a:visited,
+a:hover {
+  color: unset;
+  text-decoration: unset;
+}
+
+iframe,
+img {
+  max-width: 100%;
+}
+
+input,
+input:focus-visible {
+  appearance: none;
+  border: none;
+  background-color: var(--clr-card-background);
+  outline: none;
+  box-shadow: var(--card-shadow);
+  padding: 1.4rem 2rem;
+  border-radius: 1.25rem;
+  font-size: 1.5rem;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  box-shadow: 0 0 0 80px white inset !important;
+}
+
+button,
+.btn {
+  appearance: none;
+  border: none;
+  background-color: unset;
+  cursor: pointer;
+  margin: 0;
+  padding: 0;
+}
