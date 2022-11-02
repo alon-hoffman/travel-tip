@@ -10,11 +10,12 @@ window.onUpdateLoc = onUpdateLoc
 window.onload = onInit
 window.renderMarkers = renderMarkers
 window.onPanTo = onPanTo
+window.showUserLoc = showUserLoc
 window.onGetLocs = onGetLocs
-window.onGetUserPos = onGetUserPos
 window.onSearch = onSearch
 window.onCopyLink = onCopyLink
 window.onRemoveLoc = onRemoveLoc
+window.onGetUserPos = onGetUserPos
 
 var gMarkers
 
@@ -65,9 +66,19 @@ function onGetLocs() {
 // }
 function onPanTo(lat, lng) {
   mapService.panTo(lat, lng)
+  locService.searchLocAddress(lat, lng).then((address) => {
+    document.querySelector('.current-location span').innerText = address
+  })
+}
+
+function showUserLoc() {
+  return navigator.geolocation.getCurrentPosition((res) => {
+    onPanTo(res.coords.latitude, res.coords.longitude)
+  })
 }
 
 function onSearch(ev) {
+  console.log('im here')
   ev.preventDefault()
   const query = document.querySelector('.search input').value
   _doSearch(query)
@@ -75,9 +86,8 @@ function onSearch(ev) {
 
 function _doSearch(query) {
   utils.saveToQuery({ search: query })
-  locService.search(query).then(({ loc: { lat, lng }, address }) => {
+  locService.search(query).then(({ loc: { lat, lng } }) => {
     onPanTo(lat, lng)
-    document.querySelector('.current-location span').innerText = address
   })
 }
 
@@ -104,12 +114,18 @@ function onAddPlace(ev) {
 
 function renderCards() {
   const locs = locService.getLocs()
-  const htmlStr = locs.map(
-    (loc) =>
-      ` <article  class="location-card">
+  const locsWithAddress = locs.map((loc) =>
+    locService
+      .searchLocAddress(loc.pos.lat, loc.pos.lng)
+      .then((locAddress) => (loc.locAddress = locAddress))
+  )
+  Promise.all(locsWithAddress).then(() => {
+    const htmlStr = locs.map(
+      (loc) =>
+        ` <article  class="location-card">
     <h3 contenteditable="true" onblur="onUpdateLoc('${loc.id}',this.innerText, event)"
     onkeydown="onUpdateLoc('${loc.id}',this.innerText, event)">${loc.name}</h3>
-    <p>Tel Aviv, IL</p>
+    <p>${loc.locAddress}</p>
     <span class="icons"
       ><svg
         class="marker-remove"
@@ -131,10 +147,11 @@ function renderCards() {
       </svg>
     </span>
   </article>`
-  )
+    )
 
-  document.querySelector('.location-cards-container').innerHTML =
-    htmlStr.join('')
+    document.querySelector('.location-cards-container').innerHTML =
+      htmlStr.join('')
+  })
 }
 
 function renderMarkers() {
